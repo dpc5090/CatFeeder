@@ -241,18 +241,14 @@ void handleMessage(String m)
 
   if (m.startsWith("GET /A")) {
     runAuger();         
-    displayPage(client);  
   }
   if (m.startsWith("GET /O")) {
     openDoor();
-    displayPage(client);
   }
   if (m.startsWith("GET /C")) {
     closeDoor();   
-    displayPage(client);
   }
   if (m.startsWith("GET /L")) {
-    displayPage(client);
   }
   if (m.startsWith("GET /action_page.php?atime=")) {
     int i = m.indexOf("=")+1;
@@ -262,7 +258,6 @@ void handleMessage(String m)
     a_time = s_str.toInt();
     Serial.println(s_str);
     logMessage("AUGING TIME RESET To: "+s_str);
-    displayPage(client);
   }
 }
 void loop() {
@@ -292,6 +287,7 @@ void loop() {
           } else {    // if you got a newline, then clear currentLine:
             // Serial.println(currentLine);
             handleMessage(currentLine);
+            // displayPage(client);
             currentLine = "";
           }
         } else if (c != '\r') {  // if you got anything else but a carriage return character,
