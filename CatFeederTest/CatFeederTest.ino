@@ -26,6 +26,8 @@ int curDay;
 bool amFoodDone = false;
 bool pmFoodDone = false;
 int a_time = AUGING_TIME_MS;
+int am_time = FEED_TIME_AM;
+int pm_time = FEED_TIME_PM;
 String logs[10];
 void logMessage(String message){
   for (int i = 8; i>=0; i -=1)
@@ -214,14 +216,14 @@ void displayPage(WiFiClient client)
   client.println();
 
   // the content of the HTTP response follows the header:
-  client.print("Morning Food time:");
-  client.print(FEED_TIME_AM);
-  client.print("<br>");
-  client.print("Evening Food time:");
-  client.print(FEED_TIME_PM);
+
   client.print("<br><br><br>");
   client.print("<form action=\"/action_page.php\">");
-  client.print("<label for=\"fname\">Auging Time (MS): </label><input type=\"text\" id=\"atime\" name=\"atime\" value=\""+String(a_time)+"\"><br><br><input type=\"submit\" value=\"Update Config\"></form>");
+  client.print("<label for=\"fname\">AM FOOD TIME: </label><input type=\"text\" id=\"am_time\" name=\"am_time\" value=\""+String(am_time)+"\"><br><br>");
+  client.print("<label for=\"fname\">PM FOOD TIME: </label><input type=\"text\" id=\"pm_time\" name=\"pm_time\" value=\""+String(pm_time)+"\"><br><br>");
+  
+  client.print("<label for=\"fname\">Auging Time (MS): </label><input type=\"text\" id=\"atime\" name=\"atime\" value=\""+String(a_time)+"\"><br><br>");
+  client.print("<input type=\"submit\" value=\"Update Config\"></form>");
   
   client.print("<button onclick=\"window.location.href=\'/O\';\">\n Open Door\n</button><br><br>\n");
   client.print("<button onclick=\"window.location.href=\'/C\';\">\n Close Door\n</button><br><br>\n");
@@ -250,14 +252,64 @@ void handleMessage(String m)
   }
   if (m.startsWith("GET /L")) {
   }
-  if (m.startsWith("GET /action_page.php?atime=")) {
-    int i = m.indexOf("=")+1;
+  if (m.startsWith("GET /action_page.php?")) {
+
+    int i = m.indexOf("am_time=")+8;
     String s_str = m.substring(i);
-    i = s_str.indexOf(" ");
-    s_str = s_str.substring(0,i);
-    a_time = s_str.toInt();
+    String temp_am_time = "";
+    for (int j =0; j<s_str.length(); j++)
+    {
+      if (isDigit(s_str[j]))
+      {
+        temp_am_time+=s_str[j];
+      }
+      else
+      {
+        break;
+      }
+    }
+
     Serial.println(s_str);
-    logMessage("AUGING TIME RESET To: "+s_str);
+    Serial.println(temp_am_time);
+
+    i = m.indexOf("pm_time=")+8;
+    s_str = m.substring(i);
+    String temp_pm_time = "";
+    for (int j =0; j<s_str.length(); j++)
+    {
+      if (isDigit(s_str[j]))
+      {
+        temp_pm_time+=s_str[j];
+      }
+      else
+      {
+        break;
+      }
+    }
+    Serial.println(s_str);
+    Serial.println(temp_pm_time);
+    i = m.indexOf("atime=")+6;
+    s_str = m.substring(i);
+    String temp_a_time = "";
+    for (int j =0; j<s_str.length(); j++)
+    {
+      if (isDigit(s_str[j]))
+      {
+        temp_a_time+=s_str[j];
+      }
+      else
+      {
+        break;
+      }
+    }
+    Serial.println(s_str);
+    Serial.println(temp_a_time);
+
+    a_time = temp_a_time.toInt();
+    am_time = temp_am_time.toInt();
+    pm_time = temp_pm_time.toInt();
+
+    logMessage("AUGING TIME RESET To: "+temp_a_time);
   }
 }
 void loop() {
