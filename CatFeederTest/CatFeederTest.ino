@@ -59,8 +59,15 @@ void closeDoor(){
 void runAuger()
 {
   Serial.println("Drill BB Drill");
-  auger.write(0);
-  delay(a_time);
+  int num_aug_cycles = a_time/4000;
+  for (int i=0; i<num_aug_cycles; i++)
+  {
+    Serial.println(i);
+    auger.write(180);
+    delay(1000);
+    auger.write(0);
+    delay(4000);
+  }
   auger.write(90);
   logMessage("RAN AUGER");
   Serial.println("Done son");
@@ -122,7 +129,7 @@ void setup() {
   int tod =(WiFi.getTime()-(3600*5))%86400;  
   int day = (WiFi.getTime()-(3600*5))/86400;
   int hour =      tod/3600;
-  int minute = (tod%3600)/60;           // you're connected now, so print out the status
+  int minute = (tod%3600)/60;           // you're connected now, so print out the statuspm_time
 
   curDay = day;
   setupHour = hour;
@@ -308,8 +315,9 @@ void handleMessage(String m)
     a_time = temp_a_time.toInt();
     am_time = temp_am_time.toInt();
     pm_time = temp_pm_time.toInt();
-
-    logMessage("AUGING TIME RESET To: "+temp_a_time);
+    logMessage("AM TIME RESET TO: "+am_time);
+    logMessage("PM TIME RESET TO: "+pm_time);
+    logMessage("AUGING TIME RESET TO: "+temp_a_time);
   }
 }
 void loop() {
